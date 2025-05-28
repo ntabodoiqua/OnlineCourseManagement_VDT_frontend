@@ -1,0 +1,97 @@
+.footer {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  padding: 60px 20px 30px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* ✅ Giúp căn giữa */
+  gap: 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 200px;
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.footer-logo {
+  width: 40px;
+  height: 40px;
+}
+
+.footer-section h2,
+.footer-section h4 {
+  color: #facc15;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 16px;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.social-icons svg {
+  color: #f1f5f9;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+
+.social-icons svg:hover {
+  color: #facc15;
+}
+
+.footer-bottom {
+  text-align: center;
+  border-top: 1px solid #1e293b;
+  margin-top: 40px;
+  padding-top: 20px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.social-icons {
+  display: flex;
+  gap: 16px;
+  font-size: 22px; /* 👉 Tăng kích thước icon */
+  margin-top: 10px;
+}
+
+.social-icons a {
+  color: #f1f5f9;
+  transition: color 0.3s, transform 0.2s;
+  font-size: 28px; /* 👈 Tăng riêng icon lớn hơn */
+}
+
+.social-icons a:hover {
+  color: #facc15;
+  transform: scale(1.2);
+}
