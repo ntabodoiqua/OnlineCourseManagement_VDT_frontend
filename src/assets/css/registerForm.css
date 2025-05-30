@@ -1,0 +1,56 @@
+/* Nền toàn trang */
+body {
+  background: linear-gradient(to right, #e0f7fa, #e8eaf6);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Thẻ card chính */
+.card {
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+/* Input có icon */
+.input-group-text {
+  background-color: #f0f0f0;
+  border-right: 0;
+  min-width: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-group .form-control {
+  border-left: 0;
+}
+
+/* Hiệu ứng khi input được focus */
+.form-control:focus,
+.form-select:focus {
+  box-shadow: none;
+  border-color: #4f46e5;
+}
+
+/* Thanh đánh giá độ mạnh mật khẩu */
+.progress-bar {
+  transition: width 0.3s ease;
+}
+
+/* Nút đăng ký */
+.btn-primary {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+  border-color: #4338ca;
+}
+
+/* Không cho resize textarea */
+textarea {
+  resize: none;
+}
