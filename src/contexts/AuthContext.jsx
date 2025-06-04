@@ -49,14 +49,14 @@ export const AuthProvider = ({ children }) => {
           ? result.avatarUrl
           : `http://localhost:8080/lms${result.avatarUrl}`;
 
-        // ✅ Lấy tất cả các role từ token
+        // Lấy tất cả các role từ token
         const decoded = jwtDecode(token);
         const roles = decoded.scope
           ?.split(" ")
           .filter(scope => scope.startsWith("ROLE_"))
           .map(role => role.replace("ROLE_", "")) || ["STUDENT"];
 
-        // ✅ Xác định role cao nhất để lưu vào localStorage
+        // Xác định role cao nhất để lưu vào localStorage
         const rolePriority = { ADMIN: 3, INSTRUCTOR: 2, STUDENT: 1 };
         const highestRole = roles.reduce((prev, current) => 
           rolePriority[current] > rolePriority[prev] ? current : prev
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ loading screen toàn cục
+  // loading screen toàn cục
   if (isLoading) return <LoadingScreen />;
 
   return (
