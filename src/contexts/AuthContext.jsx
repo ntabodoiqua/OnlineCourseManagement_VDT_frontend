@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import LoadingScreen from "../components/LoadingScreen"; // 👈 file này tạo ở bước dưới
 
 const AuthContext = createContext();
 
@@ -8,20 +9,25 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [isLoading, setIsLoading] = useState(true); // 👈 loading toàn cục
 
   useEffect(() => {
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        localStorage.setItem("token", token);
-        fetchUserProfile(token);
-      } catch (e) {
-        console.error("Token decode error", e);
-        logout();
+    const init = async () => {
+      if (token) {
+        try {
+          jwtDecode(token); // kiểm tra token hợp lệ
+          await fetchUserProfile(token);
+        } catch (e) {
+          console.error("Token không hợp lệ:", e);
+          logout(false);
+        }
+      } else {
+        setUser(null);
       }
-    } else {
-      setUser(null);
-    }
+      setIsLoading(false);
+    };
+
+    init();
   }, [token]);
 
   const fetchUserProfile = async (token) => {
@@ -31,7 +37,9 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       const data = await res.json();
+
       if (data.code === 1000) {
         const result = data.result;
         const fullName = `${result.firstName || ""} ${
@@ -40,55 +48,63 @@ export const AuthProvider = ({ children }) => {
         const avatar = result.avatarUrl?.startsWith("http")
           ? result.avatarUrl
           : `http://localhost:8080/lms${result.avatarUrl}`;
-        const role = result.roles?.[0]?.name || "STUDENT";
+        const role = result.roles?.[0]?.name?.replace("ROLE_", "") || "STUDENT";
 
-        setUser({
+        const userData = {
           username: result.username,
           name: fullName || result.username,
           avatar,
           role,
-        });
+        };
 
-        localStorage.setItem("name", fullName || result.username);
+        setUser(userData);
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("name", userData.name);
         localStorage.setItem("role", role);
         localStorage.setItem("avatar", avatar);
       } else {
-        console.error("Lỗi khi lấy thông tin người dùng:", data.message);
-        logout();
+        throw new Error(data.message || "Không thể lấy user info");
       }
-    } catch (err) {
-      console.error("Không thể gọi users/myInfo:", err);
-      logout();
+    } catch (error) {
+      console.error("Lỗi khi gọi API myInfo:", error);
+      logout(false);
     }
   };
 
-  const login = (newToken) => {
-    setToken(newToken); // sẽ kích hoạt useEffect gọi fetchUserProfile()
+  const login = async (newToken) => {
+    setIsLoading(true);
+    setToken(newToken);
+    await fetchUserProfile(newToken);
+    setIsLoading(false);
   };
 
-  const logout = async () => {
+  const logout = async (navigateAfter = true) => {
     try {
-      const token = localStorage.getItem("token");
-      if (token) {
+      const oldToken = localStorage.getItem("token");
+      if (oldToken) {
         await fetch("http://localhost:8080/lms/auth/logout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
+          body: JSON.stringify({ token: oldToken }),
         });
       }
     } catch (e) {
-      console.warn("Logout request failed", e);
+      console.warn("Logout failed silently:", e);
     } finally {
       localStorage.clear();
-      setToken(null);
       setUser(null);
-      navigate("/login");
+      setToken(null);
+      if (navigateAfter) navigate("/login");
     }
   };
 
+  // ✅ loading screen toàn cục
+  if (isLoading) return <LoadingScreen />;
+
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, isAuthenticated: !!user }}
+      value={{ user, token, login, logout, isAuthenticated: !!user, isLoading }}
     >
       {children}
     </AuthContext.Provider>

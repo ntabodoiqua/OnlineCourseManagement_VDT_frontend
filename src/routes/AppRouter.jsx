@@ -3,33 +3,52 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
-import AdminDashboard from "../pages/AdminDashboard";
 import InstructorDashboard from "../pages/InstructorDashboard";
 import StudentDashboard from "../pages/StudentDashboard";
 import PrivateRoute from "../components/PrivateRoute";
+import ContactUs from "../pages/ContactUs";
 
+import AdminLayout from "../pages/AdminLayout";
+import AdminWelcome from "../pages/AdminWelcome";
+import AdminUsersPage from "../pages/AdminUsersPage";
+import AdminCoursesPage from "../pages/AdminCoursesPage";
+import AdminLessonsPage from "../pages/AdminLessonsPage";
+import AdminFilesPage from "../pages/AdminFilesPage";
+import UnauthorizedPage from "../pages/UnauthorizedPage";
 function AppRouter({ darkMode, setDarkMode }) {
   return (
     <Routes>
       {/* Public Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
-      {/* Protected Routes */}
+      <Route
+        path="/contact"
+        element={<ContactUs darkMode={darkMode} setDarkMode={setDarkMode} />}
+      />
       <Route
         path="/"
         element={<Home darkMode={darkMode} setDarkMode={setDarkMode} />}
       />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-      <Route element={<PrivateRoute allowedRoles={["ROLE_ADMIN"]} />}>
-        <Route path="/admin" element={<AdminDashboard />} />
+      {/* Protected Admin Routes */}
+      <Route element={<PrivateRoute allowedRoles={["ADMIN"]} />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminWelcome />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="courses" element={<AdminCoursesPage />} />
+          <Route path="lessons" element={<AdminLessonsPage />} />
+          <Route path="files" element={<AdminFilesPage />} />
+        </Route>
       </Route>
 
-      <Route element={<PrivateRoute allowedRoles={["ROLE_INSTRUCTOR"]} />}>
+      {/* Protected Instructor */}
+      <Route element={<PrivateRoute allowedRoles={["INSTRUCTOR"]} />}>
         <Route path="/instructor" element={<InstructorDashboard />} />
       </Route>
 
-      <Route element={<PrivateRoute allowedRoles={["ROLE_STUDENT"]} />}>
+      {/* Protected Student */}
+      <Route element={<PrivateRoute allowedRoles={["STUDENT"]} />}>
         <Route path="/student" element={<StudentDashboard />} />
       </Route>
     </Routes>

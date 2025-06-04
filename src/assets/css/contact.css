@@ -1,0 +1,124 @@
+/* Contact Page Styles */
+:root {
+  --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #ffffff 100%);
+  --card-bg: #ffffff;
+  --text-color: #1e293b;
+  --muted-color: #6b7280;
+  --input-border: #d1d5db;
+  --input-focus: #2563eb;
+  --btn-bg: #2563eb;
+  --btn-hover-bg: #1d4ed8;
+}
+
+.dark {
+  --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+  --card-bg: #2a2f3b; /* nền input nhẹ nhàng hơn trong dark mode */
+  --text-color: #e2e8f0;
+  --muted-color: #94a3b8;
+  --input-border: #334155;
+  --input-focus: #3b82f6;
+  --btn-bg: #3b82f6;
+  --btn-hover-bg: #2563eb;
+}
+
+.contact-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--bg-gradient);
+  color: var(--text-color);
+  border-radius: 16px;
+  transition: background 0.3s ease;
+}
+
+.contact-form {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form label {
+  font-weight: 600;
+}
+
+.contact-form input,
+.contact-form textarea {
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  transition: border-color 0.2s ease-in-out;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: var(--muted-color);
+  opacity: 1;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 0.1rem rgba(37, 99, 235, 0.25);
+  outline: none;
+}
+
+.contact-form .btn {
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background-color: var(--btn-bg);
+  color: #fff;
+  transition: background-color 0.2s;
+}
+
+.contact-form .btn:hover {
+  background-color: var(--btn-hover-bg);
+}
+
+.company-info {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.company-info h5 {
+  font-size: 18px;
+}
+
+.company-info p {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: var(--text-color);
+}
+
+.company-info .text-muted {
+  font-size: 14px;
+  color: var(--muted-color);
+}
+
+.company-info a {
+  text-decoration: none;
+  color: var(--btn-bg);
+}
+
+.company-info a:hover {
+  text-decoration: underline;
+  color: var(--btn-hover-bg);
+}
+
+@media (max-width: 768px) {
+  .contact-form,
+  .company-info {
+    padding: 1rem;
+  }
+
+  .contact-page {
+    padding: 1rem;
+  }
+}

@@ -59,6 +59,18 @@ function LoginForm({ siteKey }) {
         const token = data.result.token;
         login(token);
 
+        // ✅ Giải mã token để lấy role và đồng bộ format với AuthContext
+        const decoded = jwtDecode(token);
+        const role = decoded.scope?.[0]?.replace("ROLE_", "") || "STUDENT";
+
+        // ✅ Điều hướng theo role đã được format
+        const redirectPath =
+          role === "ADMIN"
+            ? "/admin"
+            : role === "INSTRUCTOR"
+            ? "/instructor"
+            : "/student";
+
         toast.success("Đăng nhập thành công!", {
           position: "top-center",
           closeOnClick: true,
@@ -66,7 +78,7 @@ function LoginForm({ siteKey }) {
         });
 
         setTimeout(() => {
-          navigate("/");
+          navigate(redirectPath);
         }, 1000);
       } else {
         const newErrors = {};
