@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faLock, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -17,6 +17,7 @@ function LoginForm({ siteKey }) {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const recaptchaRef = useRef();
 
   const handleChange = (e) => {
@@ -59,15 +60,23 @@ function LoginForm({ siteKey }) {
         const token = data.result.token;
         login(token);
 
-        // ✅ Giải mã token để lấy role và đồng bộ format với AuthContext
+        // ✅ Giải mã token để lấy tất cả các role từ scope
         const decoded = jwtDecode(token);
-        const role = decoded.scope?.[0]?.replace("ROLE_", "") || "STUDENT";
+        const roles = decoded.scope
+          ?.split(" ")
+          .filter(scope => scope.startsWith("ROLE_"))
+          .map(role => role.replace("ROLE_", "")) || ["STUDENT"];
 
-        // ✅ Điều hướng theo role đã được format
+        // ✅ Điều hướng theo role cao nhất (ưu tiên ADMIN > INSTRUCTOR > STUDENT)
+        const rolePriority = { ADMIN: 3, INSTRUCTOR: 2, STUDENT: 1 };
+        const highestRole = roles.reduce((prev, current) => 
+          rolePriority[current] > rolePriority[prev] ? current : prev
+        );
+
         const redirectPath =
-          role === "ADMIN"
+          highestRole === "ADMIN"
             ? "/admin"
-            : role === "INSTRUCTOR"
+            : highestRole === "INSTRUCTOR"
             ? "/instructor"
             : "/student";
 
@@ -156,7 +165,7 @@ function LoginForm({ siteKey }) {
                       <FontAwesomeIcon icon={faLock} />
                     </span>
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       className={`form-control ${
                         errors.password ? "is-invalid" : ""
                       }`}
@@ -166,6 +175,14 @@ function LoginForm({ siteKey }) {
                       placeholder="Nhập mật khẩu"
                       required
                     />
+                    <button
+                      type="button"
+                      className="input-group-text"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ cursor: "pointer", border: "none", background: "#f0f0f0" }}
+                    >
+                      <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                    </button>
                     <div className="invalid-feedback">{errors.password}</div>
                   </div>
                 </div>

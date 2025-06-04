@@ -48,20 +48,34 @@ export const AuthProvider = ({ children }) => {
         const avatar = result.avatarUrl?.startsWith("http")
           ? result.avatarUrl
           : `http://localhost:8080/lms${result.avatarUrl}`;
-        const role = result.roles?.[0]?.name?.replace("ROLE_", "") || "STUDENT";
+
+        // ✅ Lấy tất cả các role từ token
+        const decoded = jwtDecode(token);
+        const roles = decoded.scope
+          ?.split(" ")
+          .filter(scope => scope.startsWith("ROLE_"))
+          .map(role => role.replace("ROLE_", "")) || ["STUDENT"];
+
+        // ✅ Xác định role cao nhất để lưu vào localStorage
+        const rolePriority = { ADMIN: 3, INSTRUCTOR: 2, STUDENT: 1 };
+        const highestRole = roles.reduce((prev, current) => 
+          rolePriority[current] > rolePriority[prev] ? current : prev
+        );
 
         const userData = {
           username: result.username,
           name: fullName || result.username,
           avatar,
-          role,
+          roles, // Lưu tất cả các role
+          role: highestRole, // Lưu role cao nhất để tương thích với code cũ
         };
 
         setUser(userData);
 
         localStorage.setItem("token", token);
         localStorage.setItem("name", userData.name);
-        localStorage.setItem("role", role);
+        localStorage.setItem("roles", JSON.stringify(roles)); // Lưu mảng roles
+        localStorage.setItem("role", highestRole);
         localStorage.setItem("avatar", avatar);
       } else {
         throw new Error(data.message || "Không thể lấy user info");

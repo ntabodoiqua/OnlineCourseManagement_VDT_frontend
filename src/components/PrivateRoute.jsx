@@ -11,9 +11,15 @@ function PrivateRoute({ allowedRoles }) {
     return <Navigate to="/login" replace />;
   }
 
-  // ✅ Kiểm tra role đã được format (không có prefix ROLE_)
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    console.log("Unauthorized access attempt:", { userRole: user.role, allowedRoles });
+  // ✅ Kiểm tra xem user có ít nhất một role được phép truy cập không
+  const hasAllowedRole = user.roles.some(role => allowedRoles.includes(role));
+
+  if (!hasAllowedRole) {
+    console.log("Unauthorized access attempt:", { 
+      userRoles: user.roles, 
+      allowedRoles,
+      highestRole: user.role 
+    });
     return <Navigate to="/unauthorized" replace />;
   }
 
